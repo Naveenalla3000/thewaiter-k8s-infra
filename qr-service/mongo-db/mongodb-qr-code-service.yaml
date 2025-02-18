@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb-qr-code-service
+spec:
+  selector:
+    app: mongodb-qr-code
+  ports:
+    - protocol: TCP
+      port: 27017
+      targetPort: 27017
+

@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: qr-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: qr-service
+  template:
+    metadata:
+      labels:
+        app: qr-service
+    spec:
+      containers:
+        - name: qr-service
+          image: naveenalla/thewaiter-qr-service:1.1
+          ports:
+            - containerPort: 5050
+          env:
+            - name: PORT
+              value: "5050"
+            - name: DOMAIN
+              value: "www.example.com"
+            - name: S3_BUCKET
+              value: "waitercaller-s3-bucket"
+            - name: S3_REGION
+              value: "us-east-1"
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: qr-service-secret
+                  key: AWS_ACCESS_KEY_ID
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: qr-service-secret
+                  key: AWS_SECRET_ACCESS_KEY
+            - name: AWS_DEFAULT_REGION
+              value: "us-east-1"
+            - name: MONGO_URI
+              value: mongodb://admin:password@mongodb-qr-code-service:27017/qrdb?authSource=admin
+            - name: MONGO_DB_NAME
+              value: "qrdb"
+            - name: MONGO_QR_COLLECTION
+              value: "qr_codes"
+            - name: KAFKA_SERVER
+              value: kafka-service:9092
+            - name: KAFKA_TOPIC
+              value: "waiter-topic"
